@@ -13,7 +13,12 @@ _LOGGER = logging.getLogger(__name__)
 
 class EchoCourse(object):
     def __init__(
-        self, uuid, hostname=None, alternative_feeds=False, skip_video_discovery=False
+        self,
+        uuid,
+        hostname=None,
+        alternative_feeds=False,
+        second_feed=False,
+        skip_video_discovery=False,
     ):
         self._course_id = None
         self._skip_video_discovery = skip_video_discovery
@@ -22,6 +27,7 @@ class EchoCourse(object):
         self._videos = None
         self._driver = None
         self._alternative_feeds = alternative_feeds
+        self._second_feed = second_feed
         if hostname is None:
             self._hostname = "https://view.streaming.sydney.edu.au:8443"
         else:
@@ -146,6 +152,7 @@ class EchoCloudCourse(EchoCourse):
                     self._driver,
                     self.hostname,
                     self._alternative_feeds,
+                    second_feed=self._second_feed,
                     skip_video_discovery=self._skip_video_discovery,
                 )
             # except KeyError as e:

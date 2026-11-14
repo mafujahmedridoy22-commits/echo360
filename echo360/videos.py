@@ -199,6 +199,7 @@ class EchoCloudVideos(EchoVideos):
         driver,
         hostname,
         alternative_feeds,
+        second_feed=False,
         skip_video_on_error=True,
         skip_video_discovery=False,
     ):
@@ -216,6 +217,7 @@ class EchoCloudVideos(EchoVideos):
                         self._driver,
                         hostname,
                         alternative_feeds,
+                        second_feed=second_feed,
                         skip_video_discovery=skip_video_discovery,
                     )
                 )
@@ -237,7 +239,13 @@ class EchoCloudVideo(EchoVideo):
         return "{}/lesson/{}/classroom".format(self.hostname, self.video_id)
 
     def __init__(
-        self, video_json, driver, hostname, alternative_feeds, skip_video_discovery=False
+        self,
+        video_json,
+        driver,
+        hostname,
+        alternative_feeds,
+        second_feed=False,
+        skip_video_discovery=False,
     ):
         self.hostname = hostname
         self._driver = driver
@@ -245,6 +253,7 @@ class EchoCloudVideo(EchoVideo):
         self.is_multipart_video = False
         self.sub_videos = [self]
         self.download_alternative_feeds = alternative_feeds
+        self.download_second_feed_only = second_feed
         if "lessons" in video_json:
             # IS a multi-part lesson.
             self.sub_videos = [
@@ -286,6 +295,17 @@ class EchoCloudVideo(EchoVideo):
         self._date = self.get_date(video_json)
         self._title = video_json["lesson"]["lesson"]["name"]
 
+    def _select_feed_urls(self, urls):
+        if not isinstance(urls, list):
+            urls = [urls]
+        if self.download_second_feed_only:
+            # skip the first feed and only keep the second one
+            return urls[1:2]
+        if not self.download_alternative_feeds:
+            # download_alternative_feeds defaults to False, slice to include only the first one
+            return urls[:1]
+        return urls
+
     def download(self, output_dir, filename, pool_size=50):
         print("")
         print("-" * 60)
@@ -298,13 +318,9 @@ class EchoCloudVideo(EchoVideo):
         for cookie in self._driver.get_cookies():
             session.cookies.set(cookie["name"], cookie["value"])
 
-        urls = self.url
-        if not isinstance(urls, list):
-            urls = [urls]
-
-        if not self.download_alternative_feeds:
-            # download_alternative_feeds defaults to False, slice to include only the first one
-            urls = urls[:1]
+        urls = self._select_feed_urls(self.url)
+        if self.download_second_feed_only and not urls:
+            print("- No second video feed found to download.")
 
         final_result = True
         for counter, single_url in enumerate(urls):

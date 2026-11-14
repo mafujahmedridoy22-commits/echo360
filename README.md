@@ -85,7 +85,7 @@ python echo360.py
                   [--password PASSWORD] [--setup-credentials]
                   [--download-phantomjs-binary] [--chrome] [--firefox]
                   [--echo360cloud] [--interactive] [--alternative_feeds]
-                  [--transcripts] [--transcripts-only]
+                  [--second_feed] [--transcripts] [--transcripts-only]
                   [--debug] [--auto | --manual]
                   ECHO360_URL
 
@@ -136,6 +136,12 @@ optional arguments:
                         downloader will also try to download the second
                         video, which could be the alternative feed. Might
                         only work on some 'echo360.org' hosts.
+  --second_feed, -s     Skip the first video feed and download only the
+                        second one. Since some university have multiple video
+                        feeds, with this option the downloader will skip the
+                        first video and only download the second, which could
+                        be the alternative camera angle. Might only work on
+                        some 'echo360.org' hosts.
   --transcripts, -T     Also download each lecture's transcript (as .txt, plus
                         .vtt captions when available) alongside the video.
                         Only supported on echo360 cloud.
@@ -328,6 +334,10 @@ You are in luck! It is now possible to pick a subset of videos to download from 
 ### My lecture has two video feeds, how can I download both of them?
 
 You can add argument `--alternative_feeds` or simply `-a` to download both video feeds.
+
+### How can I download only the second video feed and skip the first?
+
+If the first video feed is e.g. the wrong camera angle, you can skip it and only download the second feed with `--second_feed` or simply `-s`.
 
 ### Technical details
 

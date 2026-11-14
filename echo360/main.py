@@ -163,6 +163,17 @@ def handle_args():
                 some 'echo360.org' hosts.",
     )
     parser.add_argument(
+        "--second_feed",
+        "-s",
+        action="store_true",
+        default=False,
+        dest="second_feed",
+        help="Skip the first video feed and download only the second one. Since some \
+                university have multiple video feeds, with this option the downloader will \
+                skip the first video and only download the second, which could be the \
+                alternative camera angle. Might only work on some 'echo360.org' hosts.",
+    )
+    parser.add_argument(
         "--transcripts",
         "-T",
         action="store_true",
@@ -269,6 +280,7 @@ def handle_args():
         args["enable_degbug"],
         not args["auto"],
         args["alternative_feeds"],
+        args["second_feed"],
         args["echo360cloud"],
         args["persistent_session"],
         args["download_transcripts"],
@@ -292,6 +304,7 @@ def main():
         enable_degbug,
         manual,
         alternative_feeds,
+        second_feed,
         usingEcho360Cloud,
         persistent_session,
         download_transcripts,
@@ -376,6 +389,7 @@ def main():
             course_uuid,
             course_hostname,
             alternative_feeds,
+            second_feed=second_feed,
             skip_video_discovery=transcripts_only,
         )
     else:
